@@ -12,8 +12,8 @@ struct Player: Codable {
     var first_name: String
     var height_feet: Int?
     var height_inches: Int?
-    var last_name: String?
-    var position: String?
+    var last_name: String
+    var position: String
     var team: Team
     var weight_pounds: Int?
 }
