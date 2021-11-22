@@ -11,7 +11,7 @@ struct Meta: Codable {
     
     var total_pages: Int
     var current_page: Int
-    var next_page: Int
+    var next_page: Int?
     var per_page: Int
     var total_count: Int
 }
