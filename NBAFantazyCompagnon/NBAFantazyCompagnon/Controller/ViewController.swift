@@ -9,6 +9,9 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    @IBOutlet var playerTableView: UITableView!
+    
+    
     //let urlString = "https://free-nba.p.rapidapi.com/players"
     var urlComponent = URLComponents()
     var numberOfPage = 0
@@ -24,6 +27,8 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        playerTableView.dataSource = self
+        playerTableView.delegate = self
         
     }
     
@@ -112,7 +117,6 @@ class ViewController: UIViewController {
         print(players.count)
         
     }
-    
     func searchByName (name:String) {
         let urlString = composeMyUrl()
         let url = createURL(with: urlString)
@@ -142,15 +146,45 @@ class ViewController: UIViewController {
                     return
                 }
                 
-                for index in 0...self.players.count-1 {
-                    print(self.players[index])
+                DispatchQueue.main.async {
+//                    self.arradata = jsonFromWeb.news
+//                    self.tableview.reloadData()
+//                    for index in 0...self.players.count-1 {
+//                        print(self.players[index])
+//                    }
+                    self.playerTableView.reloadData()
                 }
+                
                 
             } catch {
                 print("error with my API", error.localizedDescription)
             }
             }.resume()
     }
+}
+
+extension ViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return players.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PlayerCellView
+        
+        cell.firstName.text = players[indexPath.row].first_name
+        cell.lastName.text = players[indexPath.row].last_name
+        
+        
+        
+        
+        return cell
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 150
+    }
+    
+    
     
     
 }

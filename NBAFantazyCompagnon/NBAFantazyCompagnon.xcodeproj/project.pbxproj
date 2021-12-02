@@ -19,6 +19,7 @@
 		754B9AD42742B9D9003A669F /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754B9AD32742B9D9003A669F /* Team.swift */; };
 		754B9AD62742FB25003A669F /* Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754B9AD52742FB24003A669F /* Teams.swift */; };
 		754BCEFF274313BB007CAAFA /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 754BCEFE274313BB007CAAFA /* Player.swift */; };
+		7594D9D02759681D007CC98A /* PlayerCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7594D9CF2759681D007CC98A /* PlayerCellView.swift */; };
 		759B226B27430247003BE5F2 /* Meta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759B226A27430247003BE5F2 /* Meta.swift */; };
 		759B226D27430F84003BE5F2 /* Players.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759B226C27430F84003BE5F2 /* Players.swift */; };
 /* End PBXBuildFile section */
@@ -57,6 +58,7 @@
 		754B9AD32742B9D9003A669F /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 		754B9AD52742FB24003A669F /* Teams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Teams.swift; sourceTree = "<group>"; };
 		754BCEFE274313BB007CAAFA /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		7594D9CF2759681D007CC98A /* PlayerCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerCellView.swift; sourceTree = "<group>"; };
 		759B226A27430247003BE5F2 /* Meta.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Meta.swift; sourceTree = "<group>"; };
 		759B226C27430F84003BE5F2 /* Players.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Players.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -154,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				754B9AA52742B8AF003A669F /* Main.storyboard */,
+				7594D9CF2759681D007CC98A /* PlayerCellView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -304,6 +307,7 @@
 				754BCEFF274313BB007CAAFA /* Player.swift in Sources */,
 				759B226D27430F84003BE5F2 /* Players.swift in Sources */,
 				754B9AA02742B8AF003A669F /* AppDelegate.swift in Sources */,
+				7594D9D02759681D007CC98A /* PlayerCellView.swift in Sources */,
 				754B9AA22742B8AF003A669F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
