@@ -10,7 +10,7 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet var playerTableView: UITableView!
-    
+    @IBOutlet var searchTextField: UITextField!
     
     //let urlString = "https://free-nba.p.rapidapi.com/players"
     var urlComponent = URLComponents()
@@ -18,7 +18,7 @@ class ViewController: UIViewController {
     let perPage = "100"
     var players = [Player]()
     var finalArray = [Player]()
-    var nameSearch = "curry"
+    var nameSearch = ""
     
     
     
@@ -29,11 +29,12 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         playerTableView.dataSource = self
         playerTableView.delegate = self
+        searchTextField.delegate = self
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        searchByName(name: nameSearch)
+        //searchByName(name: nameSearch)
 
     }
     
@@ -183,8 +184,17 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
     }
-    
-    
+}
+
+extension ViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        nameSearch = textField.text!
+        searchByName(name: nameSearch)
+        
+        searchTextField.resignFirstResponder()
+        
+        return true
+    }
     
     
 }
