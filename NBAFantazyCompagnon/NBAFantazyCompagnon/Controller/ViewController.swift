@@ -12,13 +12,21 @@ class ViewController: UIViewController {
     @IBOutlet var playerTableView: UITableView!
     @IBOutlet var searchTextField: UITextField!
     
-    //let urlString = "https://free-nba.p.rapidapi.com/players"
+    // API for rapid API to get all info
     var urlComponent = URLComponents()
     var numberOfPage = 0
     let perPage = "100"
     var players = [Player]()
     var finalArray = [Player]()
     var nameSearch = ""
+    
+    // API to get the image Of Players
+    var urlComponentForImage = URLComponents()
+    var playerIDForImage = ""
+    
+    // API to get all NBA data ID for the Image API
+    var urlComponentAllNBA = URLComponents()
+    
     
     
     
@@ -50,10 +58,23 @@ class ViewController: UIViewController {
         
         return urlComponent.url!.absoluteString
     }
+    func composeURLForImage () -> String {
+        urlComponentForImage.scheme = "https"
+        urlComponentForImage.host = "ak-static.cms.nba.com"
+        urlComponentForImage.path = "wp-content/uploads/headshots/nba/latest/260x190/\(playerIDForImage).png"
+        
+        return urlComponentForImage.url!.absoluteString
+    }
+    func composeURLForAllNBAPlayer () -> String {
+        urlComponentAllNBA.scheme = "https"
+        urlComponentAllNBA.host = "ak-static.cms.nba.com"
+        urlComponentAllNBA.path = "data.nba.net/data/10s/prod/v1/2021/players.json"
+        
+        return urlComponentAllNBA.url!.absoluteString
+    }
     func createURL(with oneString:String) -> URL {
         return URL(string: oneString)!
     }
-    
     func numberOfPagesFromData (){
         let urlString = composeMyUrl()
         let url = createURL(with: urlString)
@@ -162,6 +183,50 @@ class ViewController: UIViewController {
             }
             }.resume()
     }
+    func saveAllNBAPlayer () {
+        let urlForAllNBAPlayer = createURL(with: composeURLForAllNBAPlayer())
+        var request = URLRequest (url: urlForAllNBAPlayer)
+        request.httpMethod = "GET"
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data else {
+                if let error = error {
+                    print(error)
+                }
+                return
+            }
+            do {
+                let decoder = JSONDecoder()
+                let result = try decoder.decode(Players.self, from: data)
+                
+                self.numberOfPage = result.meta.total_pages
+                print("Nombre de Pages : \(self.numberOfPage)")
+                self.players = result.data
+                
+                if (self.players.count <= 0) {
+                    print("No Player found ! ")
+                    return
+                }
+                
+                DispatchQueue.main.async {
+//                    self.arradata = jsonFromWeb.news
+//                    self.tableview.reloadData()
+//                    for index in 0...self.players.count-1 {
+//                        print(self.players[index])
+//                    }
+                    self.playerTableView.reloadData()
+                }
+                
+                
+            } catch {
+                print("error with my API", error.localizedDescription)
+            }
+            }.resume()
+            
+            
+        }
+    
+    
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
