@@ -9,7 +9,7 @@ import Foundation
 
 struct TeamDataAPI: Codable {
     
-    var teamId: String
-    var seasonStart: String
-    var seasonEnd: String 
+    var teamId: String?
+    var seasonStart: String?
+    var seasonEnd: String?
 }

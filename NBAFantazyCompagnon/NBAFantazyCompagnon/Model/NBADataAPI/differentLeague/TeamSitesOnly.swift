@@ -8,9 +8,9 @@
 import Foundation
 
 struct TeamSitesOnly: Codable {
-    var playerCode: String
-    var posFull: String
-    var displayAffiliation: String
-    var freeAgentCode: String 
+    var playerCode: String?
+    var posFull: String?
+    var displayAffiliation: String?
+    var freeAgentCode: String?
     
 }

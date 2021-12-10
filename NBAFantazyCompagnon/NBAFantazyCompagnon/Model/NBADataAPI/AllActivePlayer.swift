@@ -8,6 +8,6 @@
 import Foundation
 
 struct AllActivePlayer: Codable {
-    var _internal : Internal
-    var league: League
+    var _internal : Internal?
+    var league: League?
 }

@@ -8,8 +8,8 @@
 import Foundation
 
 struct DraftDataAPI: Codable {
-    var teamId: String
-    var pickNum: String
-    var roundNum: String
-    var seasonYear: String 
+    var teamId: String?
+    var pickNum: String?
+    var roundNum: String?
+    var seasonYear: String?
 }

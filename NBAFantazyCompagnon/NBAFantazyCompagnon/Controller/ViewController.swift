@@ -26,6 +26,7 @@ class ViewController: UIViewController {
     
     // API to get all NBA data ID for the Image API
     var urlComponentAllNBA = URLComponents()
+    var allPlayers = [StandardLeague]()
     
     
     
@@ -43,6 +44,8 @@ class ViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         //searchByName(name: nameSearch)
+        saveAllNBAPlayer()
+        //composeURLForImage()
 
     }
     
@@ -67,10 +70,10 @@ class ViewController: UIViewController {
     }
     func composeURLForAllNBAPlayer () -> String {
         urlComponentAllNBA.scheme = "https"
-        urlComponentAllNBA.host = "ak-static.cms.nba.com"
-        urlComponentAllNBA.path = "data.nba.net/data/10s/prod/v1/2021/players.json"
+        urlComponentAllNBA.host = "data.nba.net/"
+        urlComponentAllNBA.path = "data/10s/prod/v1/2021/players.json"
         
-        return urlComponentAllNBA.url!.absoluteString
+        return urlComponentAllNBA.url?.absoluteString ?? "https://data.nba.net/data/10s/prod/v1/2021/players.json"
     }
     func createURL(with oneString:String) -> URL {
         return URL(string: oneString)!
@@ -197,16 +200,12 @@ class ViewController: UIViewController {
             }
             do {
                 let decoder = JSONDecoder()
-                let result = try decoder.decode(Players.self, from: data)
+                let result = try decoder.decode(AllActivePlayer.self, from: data)
                 
-                self.numberOfPage = result.meta.total_pages
-                print("Nombre de Pages : \(self.numberOfPage)")
-                self.players = result.data
-                
-                if (self.players.count <= 0) {
-                    print("No Player found ! ")
-                    return
-                }
+                //self.numberOfPage = result.meta.total_pages
+                self.allPlayers = result.league!.standard
+                print(self.allPlayers[0])
+            
                 
                 DispatchQueue.main.async {
 //                    self.arradata = jsonFromWeb.news
@@ -214,7 +213,7 @@ class ViewController: UIViewController {
 //                    for index in 0...self.players.count-1 {
 //                        print(self.players[index])
 //                    }
-                    self.playerTableView.reloadData()
+                    //self.playerTableView.reloadData()
                 }
                 
                 
