@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreData
 
 class ViewController: UIViewController {
     
@@ -27,6 +28,8 @@ class ViewController: UIViewController {
     // API to get all NBA data ID for the Image API
     var urlComponentAllNBA = URLComponents()
     var allPlayers = [StandardLeague]()
+    
+    
     
     
     
@@ -204,17 +207,18 @@ class ViewController: UIViewController {
                 
                 //self.numberOfPage = result.meta.total_pages
                 self.allPlayers = result.league!.standard
-                print(self.allPlayers[0])
+                print(self.allPlayers[0].personId!)
+                
+                for index in 0...self.allPlayers.count - 1 {
+                    self.saveData(activatePlayer: self.allPlayers[index])
+                }
+                
+                
             
                 
-                DispatchQueue.main.async {
-//                    self.arradata = jsonFromWeb.news
-//                    self.tableview.reloadData()
-//                    for index in 0...self.players.count-1 {
-//                        print(self.players[index])
-//                    }
-                    //self.playerTableView.reloadData()
-                }
+//                DispatchQueue.main.sync {
+//
+//                }
                 
                 
             } catch {
@@ -224,6 +228,26 @@ class ViewController: UIViewController {
             
             
         }
+    func saveData (activatePlayer: StandardLeague) {
+        
+        print("The current activate player : \(activatePlayer.firstName!)")
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
+        let manageContent = appDelegate.persistentContainer.viewContext
+        let activePlayerEntity = NSEntityDescription.entity(forEntityName: "NBAActivePlayer", in: manageContent)!
+        let activePlayer = NSManagedObject(entity: activePlayerEntity, insertInto: manageContent)
+            
+        activePlayer.setValue(activatePlayer.firstName, forKey: "firstName")
+        activePlayer.setValue(activatePlayer.lastName, forKey: "lastName")
+        activePlayer.setValue(activatePlayer.personId, forKey: "idForPicture")
+        activePlayer.setValue("https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/\(activatePlayer.personId!).png", forKey: "pictureLink")
+        
+        do{
+            try manageContent.save()
+           }catch let error as NSError {
+
+               print("could not save . \(error), \(error.userInfo)")
+           }
+    }
     
     
 }
