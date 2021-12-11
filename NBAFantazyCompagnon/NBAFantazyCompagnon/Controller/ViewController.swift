@@ -28,6 +28,13 @@ class ViewController: UIViewController {
     // API to get all NBA data ID for the Image API
     var urlComponentAllNBA = URLComponents()
     var allPlayers = [StandardLeague]()
+    
+    var appDelegate: AppDelegate!
+    var context: NSManagedObjectContext!
+    
+
+    var nbaActivatePalyer : NBAActivePlayer!
+    let fetchActivatePlayer: NSFetchRequest<NBAActivePlayer> = NBAActivePlayer.fetchRequest()
 
     override func viewDidLoad() {
         
@@ -39,10 +46,13 @@ class ViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        //searchByName(name: nameSearch)
+        
+        DispatchQueue.main.async {
+            self.appDelegate = UIApplication.shared.delegate as? AppDelegate
+            self.context = self.appDelegate.persistentContainer.viewContext
+        }
+        
         saveAllNBAPlayer()
-        //composeURLForImage()
-
     }
     
     func composeMyUrl () -> String {
@@ -56,13 +66,6 @@ class ViewController: UIViewController {
         ]
         
         return urlComponent.url!.absoluteString
-    }
-    func composeURLForImage () -> String {
-        urlComponentForImage.scheme = "https"
-        urlComponentForImage.host = "ak-static.cms.nba.com"
-        urlComponentForImage.path = "wp-content/uploads/headshots/nba/latest/260x190/\(playerIDForImage).png"
-        
-        return urlComponentForImage.url!.absoluteString
     }
     func composeURLForAllNBAPlayer () -> String {
         urlComponentAllNBA.scheme = "https"
@@ -169,6 +172,7 @@ class ViewController: UIViewController {
                 
                 for index in 0...self.allPlayers.count - 1 {
                     self.saveOrUpdateData(activatePlayer: self.allPlayers[index])
+                    print(self.allPlayers[index])
                 }
             } catch {
                 print("error with my API", error.localizedDescription)
@@ -178,14 +182,6 @@ class ViewController: UIViewController {
     
     func saveOrUpdateData (activatePlayer: StandardLeague) {
         
-        var context: NSManagedObjectContext {
-            let appDelagate = UIApplication.shared.delegate as! AppDelegate
-            return appDelagate.persistentContainer.viewContext
-        }
-        
-        let nbaActivatePalyer : NBAActivePlayer!
-        
-        let fetchActivatePlayer: NSFetchRequest<NBAActivePlayer> = NBAActivePlayer.fetchRequest()
         fetchActivatePlayer.predicate = NSPredicate(format: "idForPicture = %@", activatePlayer.personId!)
         
         let result = try? context.fetch(fetchActivatePlayer)
@@ -196,15 +192,17 @@ class ViewController: UIViewController {
             nbaActivatePalyer = result?.first
         }
         
-        nbaActivatePalyer.lastName = activatePlayer.lastName
-        nbaActivatePalyer.firstName = activatePlayer.lastName
-        nbaActivatePalyer.idForPicture = activatePlayer.personId
-        nbaActivatePalyer.pictureLink = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/\(activatePlayer.personId!).png"
-        
-        do {
-            try context.save()
-        }catch {
-            print(error)
+        context.performAndWait {
+            nbaActivatePalyer.lastName = activatePlayer.lastName
+            nbaActivatePalyer.firstName = activatePlayer.firstName
+            nbaActivatePalyer.idForPicture = activatePlayer.personId
+            nbaActivatePalyer.pictureLink = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/\(activatePlayer.personId!).png"
+            
+            do {
+                try context.save()
+            }catch {
+                print(error)
+            }
         }
         
     }
