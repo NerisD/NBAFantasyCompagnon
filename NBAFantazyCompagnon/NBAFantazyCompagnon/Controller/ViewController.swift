@@ -28,13 +28,6 @@ class ViewController: UIViewController {
     // API to get all NBA data ID for the Image API
     var urlComponentAllNBA = URLComponents()
     var allPlayers = [StandardLeague]()
-    
-    
-    
-    
-    
-    
-    
 
     override func viewDidLoad() {
         
@@ -111,40 +104,6 @@ class ViewController: UIViewController {
             }.resume()
         
     }
-    func buildArrayOfPlayer (numberToLoop: Int) {
-        
-        for number in 1...numberToLoop {
-            numberOfPage = number
-            let urlString = composeMyUrl()
-            let url = createURL(with: urlString)
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("free-nba.p.rapidapi.com", forHTTPHeaderField: "X-RapidAPI-Host")
-            request.setValue("19494243fcmsh2d4e3a3767f24f2p1b483fjsn2e9fade51108", forHTTPHeaderField: "X-RapidAPI-Key")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data else {
-                    if let error = error {
-                        print(error)
-                    }
-                    return
-                }
-                do {
-                    let decoder = JSONDecoder()
-                    let result = try decoder.decode(Players.self, from: data)
-                    
-                    for player in result.data {
-                        self.players.append(player)
-                    }
-                } catch {
-                    print("error with my API", error.localizedDescription)
-                }
-                }.resume()
-        }
-        print(players.count)
-        
-    }
     func searchByName (name:String) {
         let urlString = composeMyUrl()
         let url = createURL(with: urlString)
@@ -207,48 +166,49 @@ class ViewController: UIViewController {
                 
                 //self.numberOfPage = result.meta.total_pages
                 self.allPlayers = result.league!.standard
-                print(self.allPlayers[0].personId!)
                 
                 for index in 0...self.allPlayers.count - 1 {
-                    self.saveData(activatePlayer: self.allPlayers[index])
+                    self.saveOrUpdateData(activatePlayer: self.allPlayers[index])
                 }
-                
-                
-            
-                
-//                DispatchQueue.main.sync {
-//
-//                }
-                
-                
             } catch {
                 print("error with my API", error.localizedDescription)
             }
             }.resume()
-            
-            
         }
-    func saveData (activatePlayer: StandardLeague) {
-        
-        print("The current activate player : \(activatePlayer.firstName!)")
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {return}
-        let manageContent = appDelegate.persistentContainer.viewContext
-        let activePlayerEntity = NSEntityDescription.entity(forEntityName: "NBAActivePlayer", in: manageContent)!
-        let activePlayer = NSManagedObject(entity: activePlayerEntity, insertInto: manageContent)
-            
-        activePlayer.setValue(activatePlayer.firstName, forKey: "firstName")
-        activePlayer.setValue(activatePlayer.lastName, forKey: "lastName")
-        activePlayer.setValue(activatePlayer.personId, forKey: "idForPicture")
-        activePlayer.setValue("https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/\(activatePlayer.personId!).png", forKey: "pictureLink")
-        
-        do{
-            try manageContent.save()
-           }catch let error as NSError {
-
-               print("could not save . \(error), \(error.userInfo)")
-           }
-    }
     
+    func saveOrUpdateData (activatePlayer: StandardLeague) {
+        
+        var context: NSManagedObjectContext {
+            let appDelagate = UIApplication.shared.delegate as! AppDelegate
+            return appDelagate.persistentContainer.viewContext
+        }
+        
+        let nbaActivatePalyer : NBAActivePlayer!
+        
+        let fetchActivatePlayer: NSFetchRequest<NBAActivePlayer> = NBAActivePlayer.fetchRequest()
+        fetchActivatePlayer.predicate = NSPredicate(format: "idForPicture = %@", activatePlayer.personId!)
+        
+        let result = try? context.fetch(fetchActivatePlayer)
+        
+        if result?.count == 0 {
+            nbaActivatePalyer = NBAActivePlayer(context: context)
+        }else {
+            nbaActivatePalyer = result?.first
+        }
+        
+        nbaActivatePalyer.lastName = activatePlayer.lastName
+        nbaActivatePalyer.firstName = activatePlayer.lastName
+        nbaActivatePalyer.idForPicture = activatePlayer.personId
+        nbaActivatePalyer.pictureLink = "https://ak-static.cms.nba.com/wp-content/uploads/headshots/nba/latest/260x190/\(activatePlayer.personId!).png"
+        
+        do {
+            try context.save()
+        }catch {
+            print(error)
+        }
+        
+    }
+        
     
 }
 
@@ -263,6 +223,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.firstName.text = players[indexPath.row].first_name
         cell.lastName.text = players[indexPath.row].last_name
+        //                DispatchQueue.main.sync {
+        //
+        //                }
         
         
         
