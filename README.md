@@ -9,7 +9,7 @@ You can simulate 1v1 for one trade and the App can give you the result. If it's 
 
 ### Dealine : Fev 22 
 
-## Version 1.5 - Descrption 
+## Version 1.5 - Description 
 You can simulate more than 1v1 for the trade. <br>
 You can do something like 1v2, 1v3, 2v3... NvN
 
