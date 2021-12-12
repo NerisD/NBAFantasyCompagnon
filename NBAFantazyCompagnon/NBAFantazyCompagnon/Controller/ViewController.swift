@@ -35,6 +35,10 @@ class ViewController: UIViewController {
 
     var nbaActivatePalyer : NBAActivePlayer!
     let fetchActivatePlayer: NSFetchRequest<NBAActivePlayer> = NBAActivePlayer.fetchRequest()
+    var details:[NSManagedObject] = []
+    
+    
+    var taskData = [String]()
 
     override func viewDidLoad() {
         
@@ -50,9 +54,21 @@ class ViewController: UIViewController {
         DispatchQueue.main.async {
             self.appDelegate = UIApplication.shared.delegate as? AppDelegate
             self.context = self.appDelegate.persistentContainer.viewContext
-        }
+            let fetchRequest = NSFetchRequest<NSManagedObject> (entityName: "NBAActivePlayer")
+            
+            do {
+                self.details = try self.context.fetch(fetchRequest)
+            }catch{
+                    print("Coo")
+                }
+            }
         
         saveAllNBAPlayer()
+        }
+        
+        
+    
+    override func viewDidAppear(_ animated: Bool) {
     }
     
     func composeMyUrl () -> String {
@@ -174,10 +190,15 @@ class ViewController: UIViewController {
                     self.saveOrUpdateData(activatePlayer: self.allPlayers[index])
                     print(self.allPlayers[index])
                 }
+                DispatchQueue.main.async {
+                    self.playerTableView.reloadData()
+                }
+    
             } catch {
                 print("error with my API", error.localizedDescription)
             }
             }.resume()
+
         }
     
     func saveOrUpdateData (activatePlayer: StandardLeague) {
@@ -212,24 +233,22 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return players.count
+        return allPlayers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        let playerFromCD = details[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PlayerCellView
         
-        cell.firstName.text = players[indexPath.row].first_name
-        cell.lastName.text = players[indexPath.row].last_name
-        //                DispatchQueue.main.sync {
-        //
-        //                }
+        cell.firstName.text = playerFromCD.value(forKey: "firstName") as? String
+        cell.lastName.text = playerFromCD.value(forKey: "lastName") as? String
         
-        
-        
+        cell.playerImage.loadImageUsingCache(with: playerFromCD.value(forKey: "pictureLink") as! String)
         
         return cell
     }
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
     }
