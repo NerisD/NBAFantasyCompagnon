@@ -3,7 +3,7 @@
 //  NBAFantazyCompagnon
 //
 //  Created by Dimitri SMITH on 12/12/2021.
-//
+// Need to change the way to load Image
 
 import UIKit
 
